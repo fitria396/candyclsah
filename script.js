@@ -30,16 +30,9 @@ function startGame() {
             tile.id = r.toString() + "-" + c.toString();
             tile.src = "./images/" + randomCandy() + ".png";
 
-            // DRAG FUNCTIONALITY
-            tile.addEventListener("dragstart", dragStart);
-            tile.addEventListener("dragover", dragOver);
-            tile.addEventListener("drop", dragDrop);
-            tile.addEventListener("dragend", dragEnd);
-
-            // TOUCH FUNCTIONALITY
-            tile.addEventListener("touchstart", dragStart);
-            tile.addEventListener("touchmove", dragOver);
-            tile.addEventListener("touchend", dragEnd);
+            // Touch Event Handlers
+            tile.addEventListener("touchstart", touchStart);
+            tile.addEventListener("touchend", touchEnd);
 
             document.getElementById("board").append(tile);
             row.push(tile);
@@ -48,19 +41,22 @@ function startGame() {
     }
 }
 
-function dragStart(e) {
+function touchStart(e) {
+    e.preventDefault(); // Prevents default touch behavior
     currTile = this;
 }
 
-function dragOver(e) {
+function touchEnd(e) {
     e.preventDefault();
+    var touch = e.changedTouches[0];
+    var element = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (element && element.tagName === "IMG") {
+        otherTile = element;
+        swapTiles();
+    }
 }
 
-function dragDrop() {
-    otherTile = this;
-}
-
-function dragEnd(e) {
+function swapTiles() {
     if (currTile.src.includes("blank") || otherTile.src.includes("blank")) {
         return;
     }
@@ -174,3 +170,4 @@ function generateCandy() {
         }
     }
 }
+
